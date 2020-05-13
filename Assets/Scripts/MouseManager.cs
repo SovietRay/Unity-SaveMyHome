@@ -23,11 +23,18 @@ public class MouseManager : MonoBehaviour
     {
         if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit _hit, 50, _clickableLayer.value))
         {
-            bool _door = false;
-            if(_hit.collider.gameObject.tag == "Doorway")
+            bool door = false;
+            bool item = false;
+
+            if(_hit.collider.gameObject.CompareTag("Doorway"))
             {
                 Cursor.SetCursor(_doorway, new Vector2(_doorway.width/2, _doorway.height/2), _cursorMode);
-                _door = true;
+                door = true;
+            }
+            else if(_hit.collider.gameObject.CompareTag("Item"))
+            {
+                Cursor.SetCursor(_combat, new Vector2(_target.width / 2, _target.height / 2), _cursorMode);
+                item = true;
             }
             else
             {
@@ -36,7 +43,7 @@ public class MouseManager : MonoBehaviour
 
             if(Input.GetMouseButtonDown(0))
             {
-                if (_door)
+                if (door)
                 {
                     //Transform _doorway = _hit.collider.gameObject.transform;
                     //OnClickEnviroment.Invoke(_doorway.position);
@@ -44,12 +51,16 @@ public class MouseManager : MonoBehaviour
                     {
                         _hit.collider.gameObject.transform.Translate(Vector3.up * _doorOpeningMultiplier);
                         _doorOpen = true;
-                    }                    
+                    }            
                     else
                     {
                         _hit.collider.gameObject.transform.Translate(Vector3.down * _doorOpeningMultiplier);
                         _doorOpen = false;
                     }
+                }
+                else if (item)
+                {
+                    OnClickEnviroment.Invoke(_hit.collider.gameObject.transform.position);
                 }
                 else
                 {
